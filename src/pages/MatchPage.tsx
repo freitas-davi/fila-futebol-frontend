@@ -3,11 +3,11 @@ import { AddPlayerDialog } from '../components/AddPlayerDialog'
 import { TeamCard } from '../components/TeamCard'
 import { WaitingQueue } from '../components/WaitingQueue'
 import { getWaitingPlayers } from '../services/demoGameService'
-import type { Category, MatchResponse, MatchResult, Player, TeamSide } from '../types/game'
+import type { MatchResponse, MatchResult, Player, TeamSide } from '../types/game'
 
 interface MatchPageProps {
   match: MatchResponse
-  onAddPlayer: (name: string, category: Category) => void
+  onAddPlayer: (name: string) => Promise<void>
   onBack: () => void
   onMatchChange: (match: MatchResponse) => void
   onReportResult: (result: MatchResult) => Promise<void>
@@ -59,8 +59,8 @@ export function MatchPage({
     })
   }
 
-  function addPlayer(name: string, category: Category) {
-    onAddPlayer(name, category)
+  async function addPlayer(name: string) {
+    await onAddPlayer(name)
   }
 
   async function reportResult(side: TeamSide) {

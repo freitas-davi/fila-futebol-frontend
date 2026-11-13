@@ -52,7 +52,7 @@ export const sessionApi = {
   },
 
   addPlayer(sessionId: number, player: AddPlayerRequest): Promise<Player> {
-    return request(`/${encodeURIComponent(sessionId)}`, {
+    return request(`/sessoes/${encodeURIComponent(sessionId)}/jogadores`, {
       method: 'POST',
       body: JSON.stringify(player),
     })

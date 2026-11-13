@@ -26,7 +26,7 @@ export interface ActiveSessionResponse {
 
 export interface AddPlayerRequest {
   nome: string
-  categoria: Category
+  categoria?: Category
 }
 
 export interface BatchPlayerRequest {

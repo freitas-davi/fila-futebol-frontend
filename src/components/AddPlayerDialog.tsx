@@ -1,32 +1,50 @@
 import { useState, type FormEvent } from 'react'
-import { CategoryPicker } from './CategoryPicker'
-import type { Category } from '../types/game'
 
 interface AddPlayerDialogProps {
-  onAdd: (name: string, category: Category) => void
+  onAdd: (name: string) => Promise<void>
   onClose: () => void
 }
 
 export function AddPlayerDialog({ onAdd, onClose }: AddPlayerDialogProps) {
   const [name, setName] = useState('')
-  const [category, setCategory] = useState<Category>('A')
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
-  function submit(event: FormEvent<HTMLFormElement>) {
+  async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
     const trimmedName = name.trim()
-    if (!trimmedName) return
-    onAdd(trimmedName, category)
-    onClose()
+    if (!trimmedName || isSubmitting) return
+
+    setError(null)
+    setIsSubmitting(true)
+    try {
+      await onAdd(trimmedName)
+      onClose()
+    } catch (submitError) {
+      setError(
+        submitError instanceof Error
+          ? submitError.message
+          : 'Não foi possível adicionar o jogador.',
+      )
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
     <div className="modal-backdrop" onMouseDown={(event) => {
-      if (event.target === event.currentTarget) onClose()
+      if (event.target === event.currentTarget && !isSubmitting) onClose()
     }}>
-      <form className="add-player-dialog" onSubmit={submit}>
+      <form className="add-player-dialog" onSubmit={(event) => void submit(event)}>
         <div className="dialog-heading">
           <h2>Adicionar jogador</h2>
-          <button className="dialog-close" type="button" aria-label="Fechar" onClick={onClose}>
+          <button
+            className="dialog-close"
+            type="button"
+            aria-label="Fechar"
+            onClick={onClose}
+            disabled={isSubmitting}
+          >
             ×
           </button>
         </div>
@@ -38,18 +56,14 @@ export function AddPlayerDialog({ onAdd, onClose }: AddPlayerDialogProps) {
           autoFocus
           required
           maxLength={60}
-          placeholder="Ex.: João Silva"
+          className="dialog-input"
+          placeholder="Digite o nome"
           value={name}
           onChange={(event) => setName(event.target.value)}
         />
-        <p className="dialog-field-label">Categoria</p>
-        <CategoryPicker
-          className="dialog-category"
-          value={category}
-          onChange={setCategory}
-        />
-        <button className="dialog-submit" type="submit">
-          Adicionar à fila
+        {error && <p className="dialog-error" role="alert">{error}</p>}
+        <button className="dialog-submit" type="submit" disabled={isSubmitting}>
+          {isSubmitting ? 'Adicionando…' : 'Adicionar à fila'}
         </button>
       </form>
     </div>

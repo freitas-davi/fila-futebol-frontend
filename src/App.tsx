@@ -81,6 +81,20 @@ function App() {
     )
   }
 
+  async function addPlayerToMatch(name: string) {
+    if (sessionId === null) {
+      throw new Error('Não foi possível identificar a sessão atual.')
+    }
+
+    const player = await sessionApi.addPlayer(sessionId, { nome: name })
+    setPlayers((currentPlayers) => [...currentPlayers, player])
+    setMatch((currentMatch) =>
+      currentMatch
+        ? { ...currentMatch, proximos: [...currentMatch.proximos, player] }
+        : currentMatch,
+    )
+  }
+
   async function startMatch() {
     if (sessionId === null || isStarting) return
     const firstTen = players.slice(0, 10)
@@ -152,7 +166,7 @@ function App() {
       {match ? (
         <MatchPage
           match={match}
-          onAddPlayer={addPlayer}
+          onAddPlayer={addPlayerToMatch}
           onBack={returnToPlayers}
           onMatchChange={setMatch}
           onReportResult={reportMatchResult}
