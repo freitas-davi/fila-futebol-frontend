@@ -3,6 +3,7 @@ import type {
   AddPlayerRequest,
   BatchPlayerRequest,
   MatchResponse,
+  MatchResult,
   Player,
 } from '../types/game'
 
@@ -24,16 +25,9 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
 }
 
 export const sessionApi = {
-  getActiveSession(signal?: AbortSignal): Promise<ActiveSessionResponse> {
-    return request('/sessoes/ativa', { signal })
-  },
 
   createOrGetActiveSession(signal?: AbortSignal): Promise<ActiveSessionResponse> {
     return request('/sessoes', { method: 'POST', signal })
-  },
-
-  startMatch(sessionId: number): Promise<MatchResponse> {
-    return request(`/sessoes/${encodeURIComponent(sessionId)}/iniciar`, { method: 'POST' })
   },
 
   addPlayersAndStart(
@@ -48,6 +42,13 @@ export const sessionApi = {
 
   getTeamsState(sessionId: number, signal?: AbortSignal): Promise<MatchResponse> {
     return request(`/sessoes/${encodeURIComponent(sessionId)}/estado-times`, { signal })
+  },
+
+  reportMatchResult(sessionId: number, resultado: MatchResult): Promise<MatchResponse> {
+    return request(`/sessoes/${encodeURIComponent(sessionId)}/partidas/resultado`, {
+      method: 'POST',
+      body: JSON.stringify({ resultado }),
+    })
   },
 
   addPlayer(sessionId: number, player: AddPlayerRequest): Promise<Player> {
