@@ -16,6 +16,8 @@ export interface MatchResponse {
   proximos: Player[]
 }
 
+export type MatchResult = 'LADO_A' | 'LADO_B'
+
 export interface ActiveSessionResponse {
   id: number
   data: string

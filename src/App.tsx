@@ -2,7 +2,13 @@ import { useCallback, useEffect, useState } from 'react'
 import { MatchPage } from './pages/MatchPage'
 import { PlayersPage } from './pages/PlayersPage'
 import { sessionApi } from './services/sessionApi'
-import type { BatchPlayerRequest, Category, MatchResponse, Player } from './types/game'
+import type {
+  BatchPlayerRequest,
+  Category,
+  MatchResponse,
+  MatchResult,
+  Player,
+} from './types/game'
 import './App.css'
 
 function App() {
@@ -105,6 +111,16 @@ function App() {
     }
   }
 
+  async function reportMatchResult(resultado: MatchResult) {
+    if (sessionId === null) {
+      throw new Error('Não foi possível identificar a sessão atual.')
+    }
+
+    const response = await sessionApi.reportMatchResult(sessionId, resultado)
+    setMatch(response)
+    setPlayers([...response.ladoA, ...response.ladoB, ...response.proximos])
+  }
+
   function returnToPlayers() {
     setMatch(null)
   }
@@ -139,6 +155,7 @@ function App() {
           onAddPlayer={addPlayer}
           onBack={returnToPlayers}
           onMatchChange={setMatch}
+          onReportResult={reportMatchResult}
         />
       ) : (
         <PlayersPage

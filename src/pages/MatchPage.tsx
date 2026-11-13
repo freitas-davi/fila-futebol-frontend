@@ -3,13 +3,14 @@ import { AddPlayerDialog } from '../components/AddPlayerDialog'
 import { TeamCard } from '../components/TeamCard'
 import { WaitingQueue } from '../components/WaitingQueue'
 import { getWaitingPlayers } from '../services/demoGameService'
-import type { Category, MatchResponse, Player } from '../types/game'
+import type { Category, MatchResponse, MatchResult, Player, TeamSide } from '../types/game'
 
 interface MatchPageProps {
   match: MatchResponse
   onAddPlayer: (name: string, category: Category) => void
   onBack: () => void
   onMatchChange: (match: MatchResponse) => void
+  onReportResult: (result: MatchResult) => Promise<void>
 }
 
 function formatTime(seconds: number) {
@@ -20,11 +21,19 @@ function formatTime(seconds: number) {
   return `${minutes}:${remainingSeconds}`
 }
 
-export function MatchPage({ match, onAddPlayer, onBack, onMatchChange }: MatchPageProps) {
+export function MatchPage({
+  match,
+  onAddPlayer,
+  onBack,
+  onMatchChange,
+  onReportResult,
+}: MatchPageProps) {
   const [isRunning, setIsRunning] = useState(false)
   const [elapsedSeconds, setElapsedSeconds] = useState(0)
   const [winner, setWinner] = useState<'A' | 'B' | null>(null)
   const [isAddingPlayer, setIsAddingPlayer] = useState(false)
+  const [isReportingResult, setIsReportingResult] = useState(false)
+  const [resultError, setResultError] = useState<string | null>(null)
 
   useEffect(() => {
     if (!isRunning) return
@@ -54,8 +63,32 @@ export function MatchPage({ match, onAddPlayer, onBack, onMatchChange }: MatchPa
     onAddPlayer(name, category)
   }
 
+  async function reportResult(side: TeamSide) {
+    if (isReportingResult) return
+
+    setWinner(side)
+    setResultError(null)
+    setIsReportingResult(true)
+    try {
+      await onReportResult(side === 'A' ? 'LADO_A' : 'LADO_B')
+      setWinner(null)
+    } catch (error) {
+      setResultError(
+        error instanceof Error ? error.message : 'Não foi possível registrar o resultado.',
+      )
+    } finally {
+      setIsReportingResult(false)
+    }
+  }
+
   return (
     <>
+      <header className="brand-row match-brand-row" aria-label="Na linha">
+        <div className="brand">
+          na lista<span>.</span>
+        </div>
+        <span className="brand-credit">created by · DaviDev</span>
+      </header>
       <header className="match-topbar">
         <button className="text-button" type="button" aria-label="Voltar à lista" onClick={onBack}>
           ←
@@ -98,7 +131,8 @@ export function MatchPage({ match, onAddPlayer, onBack, onMatchChange }: MatchPa
         side="A"
         players={match.ladoA}
         winner={winner === 'A'}
-        onSetWinner={() => setWinner((current) => (current === 'A' ? null : 'A'))}
+        onSetWinner={() => void reportResult('A')}
+        disabled={isReportingResult}
         onRemovePlayer={removePlayer}
       />
       <div className="team-separator">x</div>
@@ -106,9 +140,11 @@ export function MatchPage({ match, onAddPlayer, onBack, onMatchChange }: MatchPa
         side="B"
         players={match.ladoB}
         winner={winner === 'B'}
-        onSetWinner={() => setWinner((current) => (current === 'B' ? null : 'B'))}
+        onSetWinner={() => void reportResult('B')}
+        disabled={isReportingResult}
         onRemovePlayer={removePlayer}
       />
+      {resultError && <p role="alert">{resultError}</p>}
       <WaitingQueue players={waitingPlayers} onRemovePlayer={removePlayer} />
       {isAddingPlayer && (
         <AddPlayerDialog

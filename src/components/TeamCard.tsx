@@ -5,6 +5,7 @@ interface TeamCardProps {
   players: Player[]
   winner: boolean
   onSetWinner: () => void
+  disabled?: boolean
   onRemovePlayer: (player: Player) => void
 }
 
@@ -13,6 +14,7 @@ export function TeamCard({
   players,
   winner,
   onSetWinner,
+  disabled = false,
   onRemovePlayer,
 }: TeamCardProps) {
   return (
@@ -39,6 +41,7 @@ export function TeamCard({
         className="winner-button"
         type="button"
         aria-pressed={winner}
+        disabled={disabled}
         onClick={onSetWinner}
       >
         {winner ? 'Time vencedor' : 'Venceu'}

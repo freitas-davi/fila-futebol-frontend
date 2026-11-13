@@ -38,12 +38,14 @@ export function PlayersPage({
 
   return (
     <>
-      <header className="brand" aria-label="Na linha">
-        na linha<span>.</span>
+      <header className="brand-row" aria-label="Na linha">
+        <div className="brand">
+          na lista<span>.</span>
+        </div>
+        <span className="brand-credit">created by · DaviDev</span>
       </header>
       <section className="page-heading">
-        <h1>Jogadores</h1>
-        <p>{players.length} na lista · os 10 primeiros são sorteados</p>
+        <h1>Faça a lista</h1>
         <p className="list-hint">
           {players.length < 10
             ? `Adicione mais ${10 - players.length} jogador(es) para sortear.`
@@ -60,10 +62,8 @@ export function PlayersPage({
           value={name}
           onChange={(event) => setName(event.target.value)}
         />
-        {players.length < 10 && (
-          <CategoryPicker value={category} onChange={setCategory} />
-        )}
-        <button className="add-submit" type="submit" aria-label="Adicionar jogador">
+
+        <button className="add-submit" type="submit" aria-label="Adicionar jogador" disabled={false}>
           +
         </button>
       </form>
