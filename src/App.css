@@ -6,16 +6,39 @@
   box-sizing: border-box;
 }
 
-.brand {
+.brand-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
   margin: 0 0 28px;
+}
+
+.brand {
+  margin: 0;
   color: var(--ink);
   font-size: 19px;
   font-weight: 850;
   letter-spacing: -0.8px;
+  line-height: 1.2;
 }
 
 .brand span {
   color: var(--lime-strong);
+}
+
+.brand-credit {
+  color: var(--ink);
+  opacity: 0.6;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: -0.2px;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.match-brand-row {
+  margin-bottom: 14px;
 }
 
 .load-message {
@@ -150,8 +173,13 @@
 }
 
 .add-submit {
-  background: #858581;
+  background: var(--ink);
   color: var(--lime);
+}
+
+.add-submit:disabled {
+  cursor: pointer;
+  opacity: 1;
 }
 
 .player-list {

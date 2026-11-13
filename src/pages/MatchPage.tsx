@@ -56,6 +56,12 @@ export function MatchPage({ match, onAddPlayer, onBack, onMatchChange }: MatchPa
 
   return (
     <>
+      <header className="brand-row match-brand-row" aria-label="Na linha">
+        <div className="brand">
+          na lista<span>.</span>
+        </div>
+        <span className="brand-credit">created by DaviDev</span>
+      </header>
       <header className="match-topbar">
         <button className="text-button" type="button" aria-label="Voltar à lista" onClick={onBack}>
           ←
