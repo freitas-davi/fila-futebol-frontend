@@ -8,7 +8,6 @@ interface PlayersPageProps {
   onCategoryChange: (playerName: string, category: Category) => void
   onRemovePlayer: (player: Player) => Promise<void>
   onStartMatch: () => void | Promise<void>
-  isStarting: boolean
   startError: string | null
 }
 
@@ -18,7 +17,6 @@ export function PlayersPage({
   onCategoryChange,
   onRemovePlayer,
   onStartMatch,
-  isStarting,
   startError,
 }: PlayersPageProps) {
   const [name, setName] = useState('')
@@ -116,10 +114,10 @@ export function PlayersPage({
       <button
         className="sticky-action"
         type="button"
-        disabled={players.length < 10 || !hasTenCategories || isStarting}
+        disabled={players.length < 10 || !hasTenCategories}
         onClick={onStartMatch}
       >
-        {isStarting ? 'Sorteando times…' : 'Sortear times'}
+        Sortear times
       </button>
     </>
   )

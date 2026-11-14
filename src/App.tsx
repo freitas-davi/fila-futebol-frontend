@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { MatchPage } from './pages/MatchPage'
 import { PlayersPage } from './pages/PlayersPage'
+import { MatchLoadingScreen } from './components/MatchLoadingScreen'
 import { sessionApi } from './services/sessionApi'
 import type {
   BatchPlayerRequest,
@@ -10,6 +11,8 @@ import type {
   Player,
 } from './types/game'
 import './App.css'
+
+const MINIMUM_MATCH_LOADING_MS = 2000
 
 function getSessionPlayers(teams: MatchResponse): Player[] {
   return [
@@ -168,6 +171,7 @@ function App() {
 
     setIsStarting(true)
     setStartError(null)
+    const startedAt = performance.now()
     try {
       const response = await sessionApi.addPlayersAndStart(sessionId, requestPlayers)
       setMatch(response)
@@ -177,6 +181,10 @@ function App() {
         error instanceof Error ? error.message : 'Não foi possível sortear os times.',
       )
     } finally {
+      const remainingTime = MINIMUM_MATCH_LOADING_MS - (performance.now() - startedAt)
+      if (remainingTime > 0) {
+        await new Promise<void>((resolve) => window.setTimeout(resolve, remainingTime))
+      }
       setIsStarting(false)
     }
   }
@@ -217,6 +225,8 @@ function App() {
     )
   }
 
+  if (isStarting) return <MatchLoadingScreen />
+
   return (
     <main className="app-shell">
       {match ? (
@@ -240,7 +250,6 @@ function App() {
           }
           onRemovePlayer={removePlayer}
           onStartMatch={startMatch}
-          isStarting={isStarting}
           startError={startError}
         />
       )}

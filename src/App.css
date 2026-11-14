@@ -47,6 +47,148 @@
   text-align: center;
 }
 
+.match-loading-screen {
+  position: fixed;
+  z-index: 10;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background: #111;
+}
+
+.match-loading-content {
+  display: grid;
+  justify-items: center;
+  gap: 42px;
+  width: 100%;
+  transform: translateY(-2px);
+}
+
+.goal-animation {
+  position: relative;
+  width: min(240px, calc(100vw - 48px));
+  aspect-ratio: 200 / 140;
+}
+
+.goal-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.goal-net {
+  color: #f5f5f5;
+  animation: net-shake 2s ease-in-out infinite;
+  transform-box: view-box;
+  transform-origin: 100px 100px;
+}
+
+.net-line {
+  stroke: currentColor;
+  stroke-width: 1.5;
+  opacity: 0.35;
+}
+
+.goal-ball {
+  animation: ball-shot 2s cubic-bezier(0.3, 0.1, 0.3, 1) infinite;
+  transform-box: view-box;
+  transform-origin: 0 0;
+}
+
+.ball-body {
+  fill: var(--lime);
+}
+
+.ball-patch {
+  fill: var(--ink);
+}
+
+.match-loading-label {
+  margin: 0;
+  color: var(--lime);
+  font-size: 17px;
+  font-weight: 750;
+}
+
+.loading-dots::after {
+  content: '';
+  animation: loading-dots 1s steps(4, end) infinite;
+}
+
+@keyframes ball-shot {
+  0% {
+    transform: translate(20px, 128px) rotate(0) scale(1.3);
+  }
+
+  55% {
+    transform: translate(110px, 55px) rotate(540deg) scale(0.85);
+  }
+
+  65% {
+    transform: translate(118px, 70px) rotate(600deg) scale(0.8);
+  }
+
+  85%,
+  100% {
+    transform: translate(118px, 89px) rotate(640deg) scale(0.8);
+    opacity: 1;
+  }
+}
+
+@keyframes net-shake {
+  0%,
+  52%,
+  70%,
+  100% {
+    transform: scale(1);
+  }
+
+  60% {
+    transform: scale(1.04, 0.97);
+  }
+}
+
+@keyframes loading-dots {
+  0% {
+    content: '';
+  }
+
+  25% {
+    content: '.';
+  }
+
+  50% {
+    content: '..';
+  }
+
+  75% {
+    content: '...';
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .goal-ball,
+  .goal-net,
+  .loading-dots::after {
+    animation: none;
+  }
+
+  .goal-ball {
+    transform: translate(118px, 89px);
+  }
+
+  .goal-net {
+    transform: none;
+  }
+
+  .loading-dots::after {
+    content: '...';
+  }
+}
+
 .load-error {
   padding: 24px 8px;
   color: var(--ink);
