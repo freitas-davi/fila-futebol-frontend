@@ -9,14 +9,17 @@ import type {
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? ''
 
-async function request<T>(path: string, init?: RequestInit): Promise<T> {
-  const response = await fetch(`${API_BASE_URL}${path}`, {
+function fetchResponse(path: string, init?: RequestInit): Promise<Response> {
+  return fetch(`${API_BASE_URL}${path}`, {
     ...init,
     headers: init?.body
       ? { 'Content-Type': 'application/json', ...init.headers }
       : init?.headers,
   })
+}
 
+async function request<T>(path: string, init?: RequestInit): Promise<T> {
+  const response = await fetchResponse(path, init)
   if (!response.ok) {
     throw new Error(`Falha na requisição (${response.status}): ${response.statusText}`)
   }
@@ -24,8 +27,14 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
   return response.json() as Promise<T>
 }
 
-export const sessionApi = {
+async function requestWithoutResponse(path: string, init?: RequestInit): Promise<void> {
+  const response = await fetchResponse(path, init)
+  if (!response.ok) {
+    throw new Error(`Falha na requisição (${response.status}): ${response.statusText}`)
+  }
+}
 
+export const sessionApi = {
   createOrGetActiveSession(signal?: AbortSignal): Promise<ActiveSessionResponse> {
     return request('/sessoes', { method: 'POST', signal })
   },
@@ -56,5 +65,12 @@ export const sessionApi = {
       method: 'POST',
       body: JSON.stringify(player),
     })
+  },
+
+  removePlayer(sessionId: number, playerId: number): Promise<void> {
+    return requestWithoutResponse(
+      `/sessoes/${encodeURIComponent(sessionId)}/jogadores/${encodeURIComponent(playerId)}`,
+      { method: 'DELETE' },
+    )
   },
 }

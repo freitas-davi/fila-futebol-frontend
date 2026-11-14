@@ -11,6 +11,31 @@ import type {
 } from './types/game'
 import './App.css'
 
+function getSessionPlayers(teams: MatchResponse): Player[] {
+  return [
+    ...teams.ladoA,
+    ...teams.ladoB,
+    ...teams.proximos.filter((player) => player.status === 'FILA'),
+  ].sort((first, second) => first.posicaoFila - second.posicaoFila)
+}
+
+function isSamePlayer(player: Player, playerToRemove: Player) {
+  if (playerToRemove.id !== undefined) return player.id === playerToRemove.id
+  return (
+    player.id === undefined &&
+    player.nome === playerToRemove.nome &&
+    player.posicaoFila === playerToRemove.posicaoFila
+  )
+}
+
+function removePlayerFromTeams(teams: MatchResponse, playerToRemove: Player): MatchResponse {
+  return {
+    ladoA: teams.ladoA.filter((player) => !isSamePlayer(player, playerToRemove)),
+    ladoB: teams.ladoB.filter((player) => !isSamePlayer(player, playerToRemove)),
+    proximos: teams.proximos.filter((player) => !isSamePlayer(player, playerToRemove)),
+  }
+}
+
 function App() {
   const [players, setPlayers] = useState<Player[]>([])
   const [match, setMatch] = useState<MatchResponse | null>(null)
@@ -31,12 +56,7 @@ function App() {
       if (signal?.aborted) return
 
       setSessionId(activeSession.id)
-      const sessionPlayers = [
-        ...teamsState.ladoA,
-        ...teamsState.ladoB,
-        ...teamsState.proximos.filter((player) => player.status === 'FILA'),
-      ].sort((first, second) => first.posicaoFila - second.posicaoFila)
-      setPlayers(sessionPlayers)
+      setPlayers(getSessionPlayers(teamsState))
 
       const hasFormedTeams =
         teamsState.ladoA.some((player) => player.status === 'JOGANDO') ||
@@ -93,6 +113,42 @@ function App() {
         ? { ...currentMatch, proximos: [...currentMatch.proximos, player] }
         : currentMatch,
     )
+  }
+
+  async function removePlayer(playerToRemove: Player) {
+    if (sessionId === null) {
+      throw new Error('Não foi possível identificar a sessão atual.')
+    }
+
+    if (playerToRemove.id === undefined) {
+      setPlayers((currentPlayers) =>
+        currentPlayers.filter((player) => !isSamePlayer(player, playerToRemove)),
+      )
+      setMatch((currentMatch) =>
+        currentMatch ? removePlayerFromTeams(currentMatch, playerToRemove) : currentMatch,
+      )
+      return
+    }
+
+    await sessionApi.removePlayer(sessionId, playerToRemove.id)
+    setPlayers((currentPlayers) =>
+      currentPlayers.filter((player) => !isSamePlayer(player, playerToRemove)),
+    )
+    setMatch((currentMatch) =>
+      currentMatch ? removePlayerFromTeams(currentMatch, playerToRemove) : currentMatch,
+    )
+
+    try {
+      const teamsState = await sessionApi.getTeamsState(sessionId)
+      setPlayers(getSessionPlayers(teamsState))
+      setMatch((currentMatch) => (currentMatch ? teamsState : currentMatch))
+    } catch (error) {
+      const reason = error instanceof Error ? ` ${error.message}` : ''
+      throw new Error(
+        `Jogador removido, mas não foi possível atualizar os times.${reason}`,
+        { cause: error },
+      )
+    }
   }
 
   async function startMatch() {
@@ -168,7 +224,7 @@ function App() {
           match={match}
           onAddPlayer={addPlayerToMatch}
           onBack={returnToPlayers}
-          onMatchChange={setMatch}
+          onRemovePlayer={removePlayer}
           onReportResult={reportMatchResult}
         />
       ) : (
@@ -182,11 +238,7 @@ function App() {
               ),
             )
           }
-          onRemovePlayer={(playerName) =>
-            setPlayers((currentPlayers) =>
-              currentPlayers.filter((player) => player.nome !== playerName),
-            )
-          }
+          onRemovePlayer={removePlayer}
           onStartMatch={startMatch}
           isStarting={isStarting}
           startError={startError}

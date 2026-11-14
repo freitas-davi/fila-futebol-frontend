@@ -9,7 +9,7 @@ interface MatchPageProps {
   match: MatchResponse
   onAddPlayer: (name: string) => Promise<void>
   onBack: () => void
-  onMatchChange: (match: MatchResponse) => void
+  onRemovePlayer: (player: Player) => Promise<void>
   onReportResult: (result: MatchResult) => Promise<void>
 }
 
@@ -25,7 +25,7 @@ export function MatchPage({
   match,
   onAddPlayer,
   onBack,
-  onMatchChange,
+  onRemovePlayer,
   onReportResult,
 }: MatchPageProps) {
   const [isRunning, setIsRunning] = useState(false)
@@ -34,6 +34,8 @@ export function MatchPage({
   const [isAddingPlayer, setIsAddingPlayer] = useState(false)
   const [isReportingResult, setIsReportingResult] = useState(false)
   const [resultError, setResultError] = useState<string | null>(null)
+  const [isRemovingPlayer, setIsRemovingPlayer] = useState(false)
+  const [removeError, setRemoveError] = useState<string | null>(null)
 
   useEffect(() => {
     if (!isRunning) return
@@ -45,18 +47,19 @@ export function MatchPage({
 
   const waitingPlayers = useMemo(() => getWaitingPlayers(match), [match])
 
-  function removePlayer(playerToRemove: Player) {
-    const remains = (players: Player[]) =>
-      players.filter(
-        (player) =>
-          player.nome !== playerToRemove.nome ||
-          player.posicaoFila !== playerToRemove.posicaoFila,
+  async function removePlayer(player: Player) {
+    if (isRemovingPlayer) return
+    setIsRemovingPlayer(true)
+    setRemoveError(null)
+    try {
+      await onRemovePlayer(player)
+    } catch (error) {
+      setRemoveError(
+        error instanceof Error ? error.message : 'Não foi possível remover o jogador.',
       )
-    onMatchChange({
-      ladoA: remains(match.ladoA),
-      ladoB: remains(match.ladoB),
-      proximos: remains(match.proximos),
-    })
+    } finally {
+      setIsRemovingPlayer(false)
+    }
   }
 
   async function addPlayer(name: string) {
@@ -134,6 +137,7 @@ export function MatchPage({
         onSetWinner={() => void reportResult('A')}
         disabled={isReportingResult}
         onRemovePlayer={removePlayer}
+        removeDisabled={isRemovingPlayer}
       />
       <div className="team-separator">x</div>
       <TeamCard
@@ -143,9 +147,15 @@ export function MatchPage({
         onSetWinner={() => void reportResult('B')}
         disabled={isReportingResult}
         onRemovePlayer={removePlayer}
+        removeDisabled={isRemovingPlayer}
       />
       {resultError && <p role="alert">{resultError}</p>}
-      <WaitingQueue players={waitingPlayers} onRemovePlayer={removePlayer} />
+      {removeError && <p role="alert">{removeError}</p>}
+      <WaitingQueue
+        players={waitingPlayers}
+        onRemovePlayer={removePlayer}
+        removeDisabled={isRemovingPlayer}
+      />
       {isAddingPlayer && (
         <AddPlayerDialog
           onAdd={addPlayer}

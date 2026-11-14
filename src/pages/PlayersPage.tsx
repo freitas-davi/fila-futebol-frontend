@@ -6,7 +6,7 @@ interface PlayersPageProps {
   players: Player[]
   onAddPlayer: (name: string, category: Category | null) => void
   onCategoryChange: (playerName: string, category: Category) => void
-  onRemovePlayer: (playerName: string) => void
+  onRemovePlayer: (player: Player) => Promise<void>
   onStartMatch: () => void | Promise<void>
   isStarting: boolean
   startError: string | null
@@ -23,6 +23,8 @@ export function PlayersPage({
 }: PlayersPageProps) {
   const [name, setName] = useState('')
   const [category, setCategory] = useState<Category | null>(null)
+  const [isRemovingPlayer, setIsRemovingPlayer] = useState(false)
+  const [removeError, setRemoveError] = useState<string | null>(null)
 
   const hasTenCategories =
     players.length >= 10 && players.slice(0, 10).every((player) => player.categoria !== null)
@@ -34,6 +36,21 @@ export function PlayersPage({
     onAddPlayer(trimmedName, players.length < 10 ? category : null)
     setName('')
     setCategory(null)
+  }
+
+  async function removePlayer(player: Player) {
+    if (isRemovingPlayer) return
+    setIsRemovingPlayer(true)
+    setRemoveError(null)
+    try {
+      await onRemovePlayer(player)
+    } catch (error) {
+      setRemoveError(
+        error instanceof Error ? error.message : 'Não foi possível remover o jogador.',
+      )
+    } finally {
+      setIsRemovingPlayer(false)
+    }
   }
 
   return (
@@ -71,7 +88,7 @@ export function PlayersPage({
         {players.map((player, index) => (
           <article
             className={`player-row ${index < 10 ? 'player-row-with-category' : ''}`}
-            key={`${player.nome}-${index}`}
+            key={player.id ?? `${player.nome}-${index}`}
           >
             <span className="player-number">{index + 1}</span>
             <span className="player-name">{player.nome}</span>
@@ -86,13 +103,15 @@ export function PlayersPage({
               className="remove-button"
               type="button"
               aria-label={`Remover ${player.nome}`}
-              onClick={() => onRemovePlayer(player.nome)}
+              disabled={isRemovingPlayer}
+              onClick={() => void removePlayer(player)}
             >
               ×
             </button>
           </article>
         ))}
       </div>
+      {removeError && <p className="start-error" role="alert">{removeError}</p>}
       {startError && <p className="start-error" role="alert">{startError}</p>}
       <button
         className="sticky-action"

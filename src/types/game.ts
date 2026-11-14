@@ -3,6 +3,7 @@ export type PlayerStatus = 'JOGANDO' | 'FILA'
 export type TeamSide = 'A' | 'B'
 
 export interface Player {
+  id?: number
   nome: string
   categoria: Category | null
   status: PlayerStatus

@@ -2,10 +2,15 @@ import type { Player } from '../types/game'
 
 interface WaitingQueueProps {
   players: Player[]
-  onRemovePlayer: (player: Player) => void
+  onRemovePlayer: (player: Player) => void | Promise<void>
+  removeDisabled?: boolean
 }
 
-export function WaitingQueue({ players, onRemovePlayer }: WaitingQueueProps) {
+export function WaitingQueue({
+  players,
+  onRemovePlayer,
+  removeDisabled = false,
+}: WaitingQueueProps) {
   const groups: Player[][] = []
   for (let index = 0; index < players.length; index += 5) {
     groups.push(players.slice(index, index + 5))
@@ -22,7 +27,7 @@ export function WaitingQueue({ players, onRemovePlayer }: WaitingQueueProps) {
             <section className="queue-card" key={`queue-group-${groupIndex + 1}`}>
               <h3>{`${groupIndex + 1}º TIME`}</h3>
               {group.map((player) => (
-                <div className="queue-row" key={`${player.posicaoFila}-${player.nome}`}>
+                <div className="queue-row" key={player.id ?? `${player.posicaoFila}-${player.nome}`}>
                   <span className="queue-position">{player.posicaoFila}</span>
                   <span className="lineup-name">{player.nome}</span>
                   <span className="category-badge">{player.categoria ?? '—'}</span>
@@ -30,7 +35,8 @@ export function WaitingQueue({ players, onRemovePlayer }: WaitingQueueProps) {
                     className="lineup-remove"
                     type="button"
                     aria-label={`Remover ${player.nome} da fila`}
-                    onClick={() => onRemovePlayer(player)}
+                    disabled={removeDisabled}
+                    onClick={() => void onRemovePlayer(player)}
                   >
                     ×
                   </button>
