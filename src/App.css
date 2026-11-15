@@ -261,7 +261,7 @@
   box-shadow: 0 2px 4px #17171212;
   color: var(--ink);
   font: inherit;
-  font-size: 14px;
+  font-size: 16px;
 }
 
 .add-player-form input:focus {

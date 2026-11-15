@@ -1,4 +1,8 @@
-export function MatchLoadingScreen() {
+interface LoadingScreenProps {
+  message: string
+}
+
+export function LoadingScreen({ message }: LoadingScreenProps) {
   return (
     <main className="match-loading-screen">
       <div className="match-loading-content" role="status" aria-live="polite">
@@ -34,7 +38,7 @@ export function MatchLoadingScreen() {
           </svg>
         </div>
         <p className="match-loading-label">
-          Sorteando times<span className="loading-dots" />
+          {message}<span className="loading-dots" />
         </p>
       </div>
     </main>

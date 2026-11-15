@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { MatchPage } from './pages/MatchPage'
 import { PlayersPage } from './pages/PlayersPage'
-import { MatchLoadingScreen } from './components/MatchLoadingScreen'
+import { LoadingScreen } from './components/LoadingScreen'
 import { sessionApi } from './services/sessionApi'
 import type {
   BatchPlayerRequest,
@@ -203,13 +203,7 @@ function App() {
     setMatch(null)
   }
 
-  if (isLoading) {
-    return (
-      <main className="app-shell">
-        <p className="load-message" role="status">Carregando sessão ativa…</p>
-      </main>
-    )
-  }
+  if (isLoading) return <LoadingScreen message="Carregando sessão" />
 
   if (loadError) {
     return (
@@ -225,7 +219,7 @@ function App() {
     )
   }
 
-  if (isStarting) return <MatchLoadingScreen />
+  if (isStarting) return <LoadingScreen message="Sorteando times" />
 
   return (
     <main className="app-shell">
