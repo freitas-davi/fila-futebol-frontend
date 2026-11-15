@@ -5,6 +5,8 @@ import { WaitingQueue } from '../components/WaitingQueue'
 import { getWaitingPlayers } from '../services/demoGameService'
 import type { MatchResponse, MatchResult, Player, TeamSide } from '../types/game'
 
+const MINIMUM_RESULT_LOADING_MS = 1500
+
 interface MatchPageProps {
   match: MatchResponse
   onAddPlayer: (name: string) => Promise<void>
@@ -72,14 +74,19 @@ export function MatchPage({
     setWinner(side)
     setResultError(null)
     setIsReportingResult(true)
+    const startedAt = performance.now()
     try {
       await onReportResult(side === 'A' ? 'LADO_A' : 'LADO_B')
-      setWinner(null)
     } catch (error) {
       setResultError(
         error instanceof Error ? error.message : 'Não foi possível registrar o resultado.',
       )
     } finally {
+      const remainingTime = MINIMUM_RESULT_LOADING_MS - (performance.now() - startedAt)
+      if (remainingTime > 0) {
+        await new Promise<void>((resolve) => window.setTimeout(resolve, remainingTime))
+      }
+      setWinner(null)
       setIsReportingResult(false)
     }
   }
@@ -98,22 +105,11 @@ export function MatchPage({
         </button>
         <div className="topbar-actions">
           <button
-            className="text-button"
-            type="button"
-            aria-label="Reiniciar cronômetro"
-            onClick={() => {
-              setIsRunning(false)
-              setElapsedSeconds(0)
-            }}
-          >
-            ↶
-          </button>
-          <button
             className="add-inline-button"
             type="button"
             onClick={() => setIsAddingPlayer(true)}
           >
-            + &nbsp;Adicionar
+            + &nbsp;Adicionar jogador
           </button>
         </div>
       </header>
@@ -121,19 +117,34 @@ export function MatchPage({
         <time className="timer" aria-label={`Tempo ${formatTime(elapsedSeconds)}`}>
           {formatTime(elapsedSeconds)}
         </time>
-        <button
-          className="play-button"
-          type="button"
-          aria-label={isRunning ? 'Pausar cronômetro' : 'Iniciar cronômetro'}
-          onClick={() => setIsRunning((running) => !running)}
-        >
-          {isRunning ? 'Ⅱ' : '▷'}
-        </button>
+        <div className="timer-actions">
+          <button
+            className="timer-reset-button"
+            type="button"
+            aria-label="Reiniciar cronômetro"
+            title="Reiniciar cronômetro"
+            onClick={() => {
+              setIsRunning(false)
+              setElapsedSeconds(0)
+            }}
+          >
+            ↻
+          </button>
+          <button
+            className="play-button"
+            type="button"
+            aria-label={isRunning ? 'Pausar cronômetro' : 'Iniciar cronômetro'}
+            onClick={() => setIsRunning((running) => !running)}
+          >
+            {isRunning ? 'Ⅱ' : '▷'}
+          </button>
+        </div>
       </div>
       <TeamCard
         side="A"
         players={match.ladoA}
         winner={winner === 'A'}
+        isLoading={isReportingResult && winner === 'B'}
         onSetWinner={() => void reportResult('A')}
         disabled={isReportingResult}
         onRemovePlayer={removePlayer}
@@ -144,6 +155,7 @@ export function MatchPage({
         side="B"
         players={match.ladoB}
         winner={winner === 'B'}
+        isLoading={isReportingResult && winner === 'A'}
         onSetWinner={() => void reportResult('B')}
         disabled={isReportingResult}
         onRemovePlayer={removePlayer}

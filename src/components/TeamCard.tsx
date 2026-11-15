@@ -4,6 +4,7 @@ interface TeamCardProps {
   side: TeamSide
   players: Player[]
   winner: boolean
+  isLoading?: boolean
   onSetWinner: () => void
   disabled?: boolean
   onRemovePlayer: (player: Player) => void | Promise<void>
@@ -14,13 +15,18 @@ export function TeamCard({
   side,
   players,
   winner,
+  isLoading = false,
   onSetWinner,
   disabled = false,
   onRemovePlayer,
   removeDisabled = false,
 }: TeamCardProps) {
   return (
-    <section className="team-card" aria-label={`Time ${side}`}>
+    <section
+      className="team-card"
+      aria-label={`Time ${side}`}
+      aria-busy={isLoading}
+    >
       <div className="team-heading">
         <span className="team-mark">{side}</span>
         <span>Time {side}</span>
@@ -49,6 +55,12 @@ export function TeamCard({
       >
         {winner ? 'Time vencedor' : 'Venceu'}
       </button>
+      {isLoading && (
+        <div className="team-loading-overlay" role="status" aria-live="polite">
+          <span className="team-loading-spinner" aria-hidden="true" />
+          <span>Atualizando times…</span>
+        </div>
+      )}
     </section>
   )
 }
