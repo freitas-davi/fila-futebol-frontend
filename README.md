@@ -1,75 +1,33 @@
-# React + TypeScript + Vite
+# NaLista.
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Chega de confusão na hora de escolher os times!
 
-Currently, two official plugins are available:
+O **NaLista** organiza a fila, monta as equipes e ajuda a definir quem entra na próxima partida. Tudo para que a pelada seja mais justa e rápida.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Como funciona
 
-## React Compiler
+1. Uma nova sessão de pelada é criada.
+2. Os jogadores entram na fila.
+3. Os times são sorteados.
+4. A partida acontece.
+5. O resultado define quem sai e quem entra na próxima.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Na pelada
 
-## Expanding the ESLint configuration
+- Cada partida começa com **10 jogadores**, divididos em **2 times de 5**.
+- Os jogadores podem ser separados por categoria: **A, B, C ou D**.
+- A posição na fila define a ordem de entrada dos participantes.
+- Os jogadores em campo ficam associados à partida até o resultado ser registrado.
+- Depois da partida, o time perdedor vai para o fim da fila.
+- Os primeiros cinco jogadores da fila entram no lugar do time perdedor.
+- O time vencedor permanece em campo para o próximo jogo.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Regras da sessão
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+- Para iniciar o sorteio, são necessários pelo menos **10 jogadores**, com categoria marcada para os 10 primeiros.
+- Os jogadores podem ser removidos da lista, e suas categorias podem ser atualizadas antes do sorteio.
+- Se alguém sair enquanto estiver em campo, o próximo da fila assume seu lugar no mesmo time.
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## Nosso objetivo
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
-```
-
-You can also install [eslint-plugin-react-x](https://npmx.dev/package/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://npmx.dev/package/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
-```
+Deixar a organização da pelada por conta do sistema, sem papel e caneta!
