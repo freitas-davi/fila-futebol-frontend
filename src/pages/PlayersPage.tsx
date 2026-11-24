@@ -1,6 +1,8 @@
 import { useState, type FormEvent } from 'react'
-import { CategoryPicker } from '../components/CategoryPicker'
+import { BrandHeader } from '../components/brand-header/BrandHeader.tsx'
+import { CategoryPicker } from '../components/category-picker/CategoryPicker.tsx'
 import type { Category, Player } from '../types/game'
+import './PlayersPage.css'
 
 interface PlayersPageProps {
   players: Player[]
@@ -53,12 +55,7 @@ export function PlayersPage({
 
   return (
     <>
-      <header className="brand-row" aria-label="Na linha">
-        <div className="brand">
-          na lista<span>.</span>
-        </div>
-        <span className="brand-credit">created by · DaviDev</span>
-      </header>
+      <BrandHeader />
       <section className="page-heading">
         <h1>Faça a lista</h1>
         <p className="list-hint">

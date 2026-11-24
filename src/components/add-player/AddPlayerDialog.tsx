@@ -1,4 +1,5 @@
 import { useState, type FormEvent } from 'react'
+import './AddPlayerDialog.css'
 
 interface AddPlayerDialogProps {
   onAdd: (name: string) => Promise<void>

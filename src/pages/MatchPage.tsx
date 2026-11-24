@@ -1,9 +1,11 @@
 import { useEffect, useMemo, useState } from 'react'
-import { AddPlayerDialog } from '../components/AddPlayerDialog'
-import { TeamCard } from '../components/TeamCard'
-import { WaitingQueue } from '../components/WaitingQueue'
+import { AddPlayerDialog } from '../components/add-player/AddPlayerDialog.tsx'
+import { BrandHeader } from '../components/brand-header/BrandHeader.tsx'
+import { TeamCard } from '../components/team-card/TeamCard.tsx'
+import { WaitingQueue } from '../components/waiting-queue/WaitingQueue.tsx'
 import { getWaitingPlayers } from '../services/demoGameService'
 import type { MatchResponse, MatchResult, Player, TeamSide } from '../types/game'
+import './MatchPage.css'
 
 const MINIMUM_RESULT_LOADING_MS = 1500
 
@@ -93,12 +95,7 @@ export function MatchPage({
 
   return (
     <>
-      <header className="brand-row match-brand-row" aria-label="Na linha">
-        <div className="brand">
-          na lista<span>.</span>
-        </div>
-        <span className="brand-credit">created by · DaviDev</span>
-      </header>
+      <BrandHeader compact />
       <header className="match-topbar">
         <button className="text-button" type="button" aria-label="Voltar à lista" onClick={onBack}>
           ←

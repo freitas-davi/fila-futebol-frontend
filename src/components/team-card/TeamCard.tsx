@@ -1,4 +1,5 @@
-import type { Player, TeamSide } from '../types/game'
+import type { Player, TeamSide } from '../../types/game.ts'
+import './TeamCard.css'
 
 interface TeamCardProps {
   side: TeamSide

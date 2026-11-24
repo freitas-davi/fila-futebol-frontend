@@ -1,4 +1,5 @@
-import type { Category } from '../types/game'
+import type { Category } from '../../types/game.ts'
+import './CategoryPicker.css'
 
 const categories: Category[] = ['A', 'B', 'C', 'D']
 

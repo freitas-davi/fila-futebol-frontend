@@ -1,0 +1,85 @@
+.match-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0 0 12px;
+}
+
+.topbar-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.text-button {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  font: inherit;
+  font-size: 22px;
+}
+
+.add-inline-button {
+  padding: 10px 16px;
+  border: 0;
+  border-radius: 24px;
+  background: var(--ink);
+  color: var(--lime);
+  cursor: pointer;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 750;
+}
+
+.match-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 12px 4px 15px;
+}
+
+.timer-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.timer {
+  color: var(--ink);
+  font-size: 42px;
+  font-weight: 750;
+  letter-spacing: -2px;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.timer-reset-button {
+  display: grid;
+  width: 42px;
+  height: 42px;
+  place-items: center;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background: var(--card);
+  color: var(--ink);
+  cursor: pointer;
+  font: inherit;
+  font-size: 23px;
+  box-shadow: 0 3px 8px #17171212;
+}
+
+.play-button {
+  display: grid;
+  width: 50px;
+  height: 50px;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  background: var(--lime);
+  color: var(--ink);
+  cursor: pointer;
+  font-size: 19px;
+  box-shadow: 0 3px 8px #17171220;
+}

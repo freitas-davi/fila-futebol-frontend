@@ -1,4 +1,5 @@
-import type { Player } from '../types/game'
+import type { Player } from '../../types/game.ts'
+import './WaitingQueue.css'
 
 interface WaitingQueueProps {
   players: Player[]

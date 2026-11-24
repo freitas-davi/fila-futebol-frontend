@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { MatchPage } from './pages/MatchPage'
 import { PlayersPage } from './pages/PlayersPage'
-import { LoadingScreen } from './components/LoadingScreen'
+import { LoadingScreen } from './components/loading-screen/LoadingScreen.tsx'
 import { sessionApi } from './services/sessionApi'
 import type {
   BatchPlayerRequest,

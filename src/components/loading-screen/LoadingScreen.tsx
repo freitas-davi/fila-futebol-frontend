@@ -1,3 +1,5 @@
+import './LoadingScreen.css'
+
 interface LoadingScreenProps {
   message: string
 }

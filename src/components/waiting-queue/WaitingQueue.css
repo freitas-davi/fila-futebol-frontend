@@ -1,0 +1,82 @@
+.queue-section {
+  margin: 22px 4px 0;
+}
+
+.queue-title {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin: 0 0 10px;
+  color: var(--ink);
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: -0.4px;
+}
+
+.queue-title span {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.queue-groups {
+  display: grid;
+  gap: 9px;
+}
+
+.queue-card {
+  padding: 11px 13px;
+  border: 1px solid #cad7a6;
+  border-radius: 16px;
+  background: #edf6d5;
+  color: var(--ink);
+}
+
+.queue-card h3 {
+  margin: 0 0 3px;
+  color: #4b6124;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.8px;
+}
+
+.queue-row {
+  display: grid;
+  min-height: 42px;
+  grid-template-columns: 22px minmax(0, 1fr) 24px 24px;
+  align-items: center;
+  gap: 7px;
+  border-bottom: 1px solid #dce5c8;
+}
+
+.queue-row:last-child {
+  border-bottom: 0;
+}
+
+.queue-position {
+  color: #75805e;
+  font-size: 11px;
+}
+
+.queue-row .lineup-name {
+  color: #29261e;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.queue-row .category-badge {
+  color: #65704f;
+}
+
+.queue-row .lineup-remove {
+  color: #797565;
+}
+
+.empty-queue {
+  padding: 20px;
+  border: 1px dashed #cbd4b6;
+  border-radius: 16px;
+  color: var(--muted);
+  font-size: 13px;
+  text-align: center;
+}
